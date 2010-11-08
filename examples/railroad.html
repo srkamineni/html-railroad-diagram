@@ -82,7 +82,6 @@ grammar('object',
         terminal('{'),
         any(
             each(nonTerminal('string'), terminal(':'), nonTerminal('value')),
-            // TODO: display the , on the loopback
             terminal(',')),
         terminal('}')));
 
