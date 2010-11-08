@@ -58,23 +58,32 @@ function or(var_args) {
  * an empty branch.
  */
 function maybe(child) {
+  // \u25b6 is a right pointing arrowhead that indicates an empty transition.
   return or(toNode('\u25b6'), toNode(child));
 }
 
 /**
  * Like <kbd>*</kbd> in EBNF, a railroad node that repeats its child any number
  * of times.
+ * @param opt_loopback A node to use on the return edge.  For a comma separated
+ *     list of numbers, make child a number and make the loopback a comma.
  */
-function any(child) {
-  return maybe(many(child));
+function any(child, opt_loopback) {
+  return maybe(many(child, opt_loopback));
 }
 
 /**
  * Like <kbd>+</kbd> in EBNF, a railroad node that passes through its child and
  * then repeats any number of times.
+ * @param opt_loopback A node to use on the return edge.  For a comma separated
+ *     list of numbers, make child a number and make the loopback a comma.
  */
-function many(child) {
-  return { op: '+', children: [child] };
+function many(child, opt_loopback) {
+  return {
+    op: '+',
+    children: [child],
+    loopback: opt_loopback ? toNode(opt_loopback) : null
+  };
 }
 
 /**
@@ -122,7 +131,7 @@ function appendToDOM(node, parent, opt_stats) {
   parent.appendChild(div);
   if (node.op === 'html') {
     div.innerHTML = node.content;
-    if (node.content === '\u25b6') {
+    if (node.content === '\u25b6') {  // Line up arrowhead nicely.
       div.style.fontSize = div.style.height = '8px';
     }
     if (opt_stats) {
@@ -132,12 +141,17 @@ function appendToDOM(node, parent, opt_stats) {
     return div;
   }
 
+  // Render all the children.
   var children = [];
   var n = node.children.length;
   for (var i = 0; i < n; ++i) {
     children[i] = appendToDOM(node.children[i], div);
   }
 
+  /**
+   * Fraw a left facing arrow using a unicode arrowhead. 
+   * This is used for the loopback for many/any nodes.
+   */
   function renderArrowhead(arrowheadText, parent) {
     var arrowhead = document.createElement('SPAN');
     parent.appendChild(arrowhead);
@@ -153,6 +167,20 @@ function appendToDOM(node, parent, opt_stats) {
     arrowhead.style.verticalAlign = 'middle';
   }
 
+  /**
+   * Draw an arrow from left to right like
+   * <pre>
+   * --\
+   *   |
+   *   \--
+   * </pre>
+   * or if height is negative, like
+   * <pre>
+   *   /--
+   *   |
+   * --/
+   * </pre>
+   */
   function rightArrow(x, width, y, height, junctionX) {
     if (!height) {
       var span = document.createElement('SPAN');
@@ -231,32 +259,55 @@ function appendToDOM(node, parent, opt_stats) {
       var centerY = (height >> 1);
       for (var i = 0; i < n; ++i) {
         rightArrow(0, leftXs[i], centerY, childYCenters[i] - centerY, 8);
-        rightArrow(rightXs[i], width - rightXs[i], childYCenters[i], centerY - childYCenters[i], width - 8);
+        rightArrow(rightXs[i], width - rightXs[i], childYCenters[i],
+                   centerY - childYCenters[i], width - 8);
       }
       break;
     case '+':
       var child = children[0];
-      child.style.top = '8px';
-      child.style.left = '16px';
-      width = child.offsetWidth + 32;
-      height = child.offsetHeight + 16;
+
+      var loopback = document.createElement('SPAN');
+      div.appendChild(loopback);
+
+      var minLBHeight = 8;
+      var loopbackNode;
+      var vpadding = 0;
+      if (node.loopback) {
+        loopbackNode = appendToDOM(node.loopback, div);
+        height = Math.max(minLBHeight, loopbackNode.offsetHeight);
+        width = Math.max(child.offsetWidth, loopbackNode.offsetWidth) + 32;
+        loopbackNode.style.top
+            = ((height - loopbackNode.offsetHeight) >> 1) + 'px';
+        loopbackNode.style.left
+            = ((width - loopbackNode.offsetWidth) >> 1) + 'px';
+        height += 4;
+      } else {
+        height = minLBHeight;
+        width = child.offsetWidth + 32;
+      }
+
+      child.style.top = height + 'px';
+      child.style.left = ((width - child.offsetWidth) >> 1) + 'px';
+      height = height * 2 + child.offsetHeight;
 
       var centerY = (height >> 1);
 
-      var loopback = document.createElement('SPAN');
       loopback.style.display = 'inline-block';
-      loopback.style.borderLeft = loopback.style.borderRight = loopback.style.borderTop = '1px solid black';
-      loopback.style.borderTopLeftRadius = loopback.style.borderTopRightRadius = '6px';
+      loopback.style.borderLeft = loopback.style.borderRight
+          = loopback.style.borderTop = '1px solid black';
+      loopback.style.borderTopLeftRadius = loopback.style.borderTopRightRadius
+          = '6px';
       loopback.style.position = 'absolute';
       loopback.style.left = '8px';
-      loopback.style.top = '0px';
+      var loopbackTop = loopbackNode ? (loopbackNode.offsetHeight >> 1) : 0;
+      loopback.style.top = loopbackTop + 'px';
+      loopback.style.height = (centerY - loopbackTop - 8) + 'px';
       loopback.style.width = (width - 16) + 'px';
-      loopback.style.height = (centerY - 8) + 'px';
-      div.appendChild(loopback);
 
       loopback = document.createElement('SPAN');
       loopback.style.display = 'inline-block';
-      loopback.style.borderLeft = loopback.style.borderBottom = '1px solid black';
+      loopback.style.borderLeft = loopback.style.borderBottom
+          = '1px solid black';
       loopback.style.borderBottomLeftRadius = '6px';
       loopback.style.position = 'absolute';
       loopback.style.left = '8px';
@@ -267,7 +318,8 @@ function appendToDOM(node, parent, opt_stats) {
 
       loopback = document.createElement('SPAN');
       loopback.style.display = 'inline-block';
-      loopback.style.borderRight = loopback.style.borderBottom = '1px solid black';
+      loopback.style.borderRight = loopback.style.borderBottom
+          = '1px solid black';
       loopback.style.borderBottomRightRadius = '6px';
       loopback.style.position = 'absolute';
       loopback.style.left = (width - 16) + 'px';
@@ -276,7 +328,9 @@ function appendToDOM(node, parent, opt_stats) {
       loopback.style.height = '12px';
       div.appendChild(loopback);
 
-      renderArrowhead('\u25C0', div);
+      if (!loopbackNode) {
+        renderArrowhead('\u25C0', div);
+      }
 
       rightArrow(0, 16, centerY, 0);
       rightArrow(width - 16, 16, centerY, 0);
