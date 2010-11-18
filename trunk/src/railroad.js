@@ -7,6 +7,30 @@
 
 var railroad = (function () {
 
+// Figure out the name of the corner specific border radius style properties 
+// used by the current platform.
+var borderBottomLeftRadius = 'borderBottomLeftRadius',
+    borderBottomRightRadius = 'borderBottomRightRadius',
+    borderTopLeftRadius = 'borderTopLeftRadius',
+    borderTopRightRadius = 'borderTopRightRadius';
+
+(function () {
+  var style = document.createElement('DIV').style;
+  if (style.borderBottomLeftRadius !== 'string') {
+    if (typeof style.MozBorderRadiusBottomleft === 'string') {
+      borderBottomLeftRadius = 'MozBorderRadiusBottomleft';
+      borderBottomRightRadius = 'MozBorderRadiusBottomright';
+      borderTopLeftRadius = 'MozBorderRadiusTopleft';
+      borderTopRightRadius = 'MozBorderRadiusTopright';
+    } else if (typeof style.WebkitBorderRadiusBottomLeft === 'string') {
+      borderBottomLeftRadius = 'WebkitBorderRadiusBottomLeft';
+      borderBottomRightRadius = 'WebkitBorderRadiusBottomRight';
+      borderTopLeftRadius = 'WebkitBorderRadiusTopLeft';
+      borderTopRightRadius = 'WebkitBorderRadiusTopRight';
+    }
+  }
+})();
+
 /**
  * Converts its input to a railroad node.
  * Strings are interpreted as HTML, and railroad nodes are returned unchanged.
@@ -204,12 +228,12 @@ function appendToDOM(node, parent, opt_stats) {
         left.style.top = y + 'px';
         left.style.height = halfHeight + 'px';
         left.style.borderTop = '1px solid black';
-        left.style.borderTopRightRadius = '6px';
+        left.style[borderTopRightRadius] = '6px';
       } else {
         left.style.top = (y - halfHeight) + 'px';
         left.style.height = halfHeight + 'px';
         left.style.borderBottom = '1px solid black';
-        left.style.borderBottomRightRadius = '6px';
+        left.style[borderBottomRightRadius] = '6px';
       }
       left.style.borderRight = '1px solid black';
       div.appendChild(left);
@@ -222,12 +246,12 @@ function appendToDOM(node, parent, opt_stats) {
         right.style.top = (y + halfHeight) + 'px';
         right.style.height = (height - halfHeight) + 'px';
         right.style.borderBottom = '1px solid black';
-        right.style.borderBottomLeftRadius = '6px';
+        right.style[borderBottomLeftRadius] = '6px';
       } else {
         right.style.top = (y + height) + 'px';
         right.style.height = halfHeight + 'px';
         right.style.borderTop = '1px solid black';
-        right.style.borderTopLeftRadius = '6px';
+        right.style[borderTopLeftRadius] = '6px';
       }
       right.style.borderLeft = '1px solid black';
       div.appendChild(right);
@@ -295,7 +319,7 @@ function appendToDOM(node, parent, opt_stats) {
       loopback.style.display = 'inline-block';
       loopback.style.borderLeft = loopback.style.borderRight
           = loopback.style.borderTop = '1px solid black';
-      loopback.style.borderTopLeftRadius = loopback.style.borderTopRightRadius
+      loopback.style[borderTopLeftRadius] = loopback.style[borderTopRightRadius]
           = '6px';
       loopback.style.position = 'absolute';
       loopback.style.left = '8px';
@@ -308,7 +332,7 @@ function appendToDOM(node, parent, opt_stats) {
       loopback.style.display = 'inline-block';
       loopback.style.borderLeft = loopback.style.borderBottom
           = '1px solid black';
-      loopback.style.borderBottomLeftRadius = '6px';
+      loopback.style[borderBottomLeftRadius] = '6px';
       loopback.style.position = 'absolute';
       loopback.style.left = '8px';
       loopback.style.top = (centerY - 12) + 'px';
@@ -320,7 +344,7 @@ function appendToDOM(node, parent, opt_stats) {
       loopback.style.display = 'inline-block';
       loopback.style.borderRight = loopback.style.borderBottom
           = '1px solid black';
-      loopback.style.borderBottomRightRadius = '6px';
+      loopback.style[borderBottomRightRadius] = '6px';
       loopback.style.position = 'absolute';
       loopback.style.left = (width - 16) + 'px';
       loopback.style.top = (centerY - 12) + 'px';
