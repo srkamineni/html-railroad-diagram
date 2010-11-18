@@ -60,7 +60,7 @@ function terminal(str) {
 /** Generate a reference to another production, possibly linking to it. */
 function nonTerminal(name) {
   if (document.getElementById(name + '-railroad')) {
-    return '<span class=nonterminal><a href="#' + html(name) + '">' + html(name) + '<\/a><\/span>';
+    return '<span class=nonterminal><a href="#' + html(name) + '-railroad">' + html(name) + '<\/a><\/span>';
   } else {
     return '<span class=nonterminal>' + html(name) + '<\/span>';
   }
