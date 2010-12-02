@@ -178,7 +178,7 @@ function appendToDOM(node, parent, opt_stats) {
    */
   function renderArrowhead(arrowheadText, parent) {
     var arrowhead = document.createElement('SPAN');
-    parent.appendChild(arrowhead);
+    parent.insertBefore(arrowhead, parent.firstChild);
     arrowhead.appendChild(document.createTextNode(arrowheadText));
     arrowhead.style.position = 'absolute';
     arrowhead.style.display = 'inline-block';
@@ -236,7 +236,7 @@ function appendToDOM(node, parent, opt_stats) {
         left.style[borderBottomRightRadius] = '6px';
       }
       left.style.borderRight = '1px solid #000';
-      div.appendChild(left);
+      div.insertBefore(left, div.firstChild);
 
       var right = document.createElement('SPAN');
       right.style.position = 'absolute';
@@ -254,7 +254,7 @@ function appendToDOM(node, parent, opt_stats) {
         right.style[borderTopLeftRadius] = '6px';
       }
       right.style.borderLeft = '1px solid #000';
-      div.appendChild(right);
+      div.insertBefore(right, div.firstChild);
     }
   }
 
@@ -338,7 +338,7 @@ function appendToDOM(node, parent, opt_stats) {
       loopback.style.top = (centerY - 12) + 'px';
       loopback.style.width = '8px';
       loopback.style.height = '12px';
-      div.appendChild(loopback);
+      div.insertBefore(loopback, div.firstChild);
 
       loopback = document.createElement('SPAN');
       loopback.style.display = 'inline-block';
@@ -350,7 +350,7 @@ function appendToDOM(node, parent, opt_stats) {
       loopback.style.top = (centerY - 12) + 'px';
       loopback.style.width = '8px';
       loopback.style.height = '12px';
-      div.appendChild(loopback);
+      div.insertBefore(loopback, div.firstChild);
 
       if (!loopbackNode) {
         renderArrowhead('\u25C0', div);
