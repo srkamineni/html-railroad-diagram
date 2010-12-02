@@ -213,7 +213,7 @@ function appendToDOM(node, parent, opt_stats) {
       span.style.width = width + 'px';
       span.style.top = y + 'px';
       span.style.height = '0px';
-      span.style.borderTop = '1px solid #000';
+      span.style.borderBottom = '1px solid #000';
       div.appendChild(span);
     } else {
       if (junctionX === void 0) { junctionX = x + (width >> 1); }
@@ -291,7 +291,7 @@ function appendToDOM(node, parent, opt_stats) {
       var child = children[0];
 
       var loopback = document.createElement('SPAN');
-      div.appendChild(loopback);
+      div.insertBefore(loopback, div.firstChild);
 
       var minLBHeight = 8;
       var loopbackNode;
