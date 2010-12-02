@@ -212,8 +212,8 @@ function appendToDOM(node, parent, opt_stats) {
       span.style.left = x + 'px';
       span.style.width = width + 'px';
       span.style.top = y + 'px';
-      span.style.height = '1px';
-      span.style.background = '#000';
+      span.style.height = '0px';
+      span.style.borderTop = '1px solid #000';
       div.appendChild(span);
     } else {
       if (junctionX === void 0) { junctionX = x + (width >> 1); }
@@ -227,15 +227,15 @@ function appendToDOM(node, parent, opt_stats) {
       if (height > 0) {
         left.style.top = y + 'px';
         left.style.height = halfHeight + 'px';
-        left.style.borderTop = '1px solid black';
+        left.style.borderTop = '1px solid #000';
         left.style[borderTopRightRadius] = '6px';
       } else {
         left.style.top = (y - halfHeight) + 'px';
         left.style.height = halfHeight + 'px';
-        left.style.borderBottom = '1px solid black';
+        left.style.borderBottom = '1px solid #000';
         left.style[borderBottomRightRadius] = '6px';
       }
-      left.style.borderRight = '1px solid black';
+      left.style.borderRight = '1px solid #000';
       div.appendChild(left);
 
       var right = document.createElement('SPAN');
@@ -245,15 +245,15 @@ function appendToDOM(node, parent, opt_stats) {
       if (height > 0) {
         right.style.top = (y + halfHeight) + 'px';
         right.style.height = (height - halfHeight) + 'px';
-        right.style.borderBottom = '1px solid black';
+        right.style.borderBottom = '1px solid #000';
         right.style[borderBottomLeftRadius] = '6px';
       } else {
         right.style.top = (y + height) + 'px';
         right.style.height = halfHeight + 'px';
-        right.style.borderTop = '1px solid black';
+        right.style.borderTop = '1px solid #000';
         right.style[borderTopLeftRadius] = '6px';
       }
-      right.style.borderLeft = '1px solid black';
+      right.style.borderLeft = '1px solid #000';
       div.appendChild(right);
     }
   }
@@ -318,7 +318,7 @@ function appendToDOM(node, parent, opt_stats) {
 
       loopback.style.display = 'inline-block';
       loopback.style.borderLeft = loopback.style.borderRight
-          = loopback.style.borderTop = '1px solid black';
+          = loopback.style.borderTop = '1px solid #000';
       loopback.style[borderTopLeftRadius] = loopback.style[borderTopRightRadius]
           = '6px';
       loopback.style.position = 'absolute';
@@ -331,7 +331,7 @@ function appendToDOM(node, parent, opt_stats) {
       loopback = document.createElement('SPAN');
       loopback.style.display = 'inline-block';
       loopback.style.borderLeft = loopback.style.borderBottom
-          = '1px solid black';
+          = '1px solid #000';
       loopback.style[borderBottomLeftRadius] = '6px';
       loopback.style.position = 'absolute';
       loopback.style.left = '8px';
@@ -343,7 +343,7 @@ function appendToDOM(node, parent, opt_stats) {
       loopback = document.createElement('SPAN');
       loopback.style.display = 'inline-block';
       loopback.style.borderRight = loopback.style.borderBottom
-          = '1px solid black';
+          = '1px solid #000';
       loopback.style[borderBottomRightRadius] = '6px';
       loopback.style.position = 'absolute';
       loopback.style.left = (width - 16) + 'px';
